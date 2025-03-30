@@ -39,14 +39,15 @@ class QuietLogger:
         pass
 
 # Create a static downloads directory if it doesn't exist
-DOWNLOADS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'downloads')
+DOWNLOADS_DIR = os.path.join('/tmp', 'downloads')
 if not os.path.exists(DOWNLOADS_DIR):
-    os.makedirs(DOWNLOADS_DIR)
+    os.makedirs(DOWNLOADS_DIR, exist_ok=True)
 
-# Create logs directory if it doesn't exist
-LOGS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
+# Change logs directory to a writable location
+LOGS_DIR = os.path.join('/tmp', 'logs')
 if not os.path.exists(LOGS_DIR):
-    os.makedirs(LOGS_DIR)
+    os.makedirs(LOGS_DIR, exist_ok=True)
+
 
 # Custom progress hook for yt-dlp
 def progress_hook(d):
