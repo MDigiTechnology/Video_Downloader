@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>Free Video Downloader - Download YouTube, Instagram & Facebook Videos</title>
+    <meta name="description" content="Fast & free online video downloader. Download videos from YouTube, Instagram, and Facebook in HD quality. No registration required, unlimited downloads.">
+    <meta name="keywords" content="video downloader, youtube downloader, instagram video downloader, facebook video downloader, download youtube videos, mp3 converter, mp4 downloader, hd video download, free video downloader, online video downloader, youtube to mp3, social media downloader">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourwebsite.com/">
+    <meta property="og:title" content="Free Video Downloader - Download YouTube, Instagram & Facebook Videos">
+    <meta property="og:description" content="Fast & free online video downloader. Download videos from YouTube, Instagram, and Facebook in HD quality. No registration required.">
+    <meta property="og:image" content="{{ url_for('static', filename='img/video-downloader-preview.jpg') }}">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://yourwebsite.com/">
+    <meta property="twitter:title" content="Free Video Downloader - Download YouTube, Instagram & Facebook Videos">
+    <meta property="twitter:description" content="Fast & free online video downloader. Download videos from YouTube, Instagram, and Facebook in HD quality. No registration required.">
+    <meta property="twitter:image" content="{{ url_for('static', filename='img/video-downloader-preview.jpg') }}">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://yourwebsite.com/">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .instagram-placeholder {
+            background-color: #f3f3f3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 300px;
+            width: 100%;
+            border-radius: 5px;
+        }
+        
+        .instagram-placeholder i {
+            font-size: 48px;
+            color: #c13584; /* Instagram brand color */
+        }
+        
+        /* SEO-friendly styling for content sections */
+        .features-section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .features-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .features-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+        
+        .feature-item i {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Video Downloader</h1>
+            <p>Download videos from YouTube, Instagram, and Facebook in HD quality</p>
+        </header>
+        
+        <main>
+            <div class="download-form">
+                <form id="downloadForm">
+                    <div class="input-group">
+                        <input type="url" id="videoUrl" placeholder="Paste video URL here..." required>
+                        <button type="submit" id="submitBtn">
+                            <span class="btn-text">Download</span>
+                            <span class="btn-icon"><i class="fas fa-download"></i></span>
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="supported-platforms">
+                    <span><i class="fab fa-youtube"></i> YouTube</span>
+                    <span><i class="fab fa-instagram"></i> Instagram</span>
+                    <span><i class="fab fa-facebook"></i> Facebook</span>
+                </div>
+            </div>
+            
+            <div id="videoInfo" class="video-info hidden">
+                <div id="loader" class="loader">
+                    <div class="spinner"></div>
+                </div>
+                <div id="infoContent" class="info-content" style="display: none;">
+                    <div class="thumbnail">
+                        <img id="videoThumbnail" src="" alt="Video Thumbnail">
+                        <div id="instagramPlaceholder" class="instagram-placeholder" style="display: none;">
+                            <i class="fab fa-instagram"></i>
+                        </div>
+                    </div>
+                    <div class="details">
+                        <h2 id="videoTitle">Video Title</h2>
+                        <p id="videoAuthor">Creator</p>
+                        <p id="videoDuration">Duration: Unknown</p>
+                        <p>Platform: <span id="videoPlatform">YouTube</span></p>
+                        
+                        <div class="download-options">
+                            <div class="option-group">
+                                <label>Format:</label>
+                                <div class="format-options">
+                                    <button class="format-btn active" data-format="video">Video</button>
+                                    <button class="format-btn" data-format="audio">Audio (MP3)</button>
+                                </div>
+                            </div>
+                            
+                            <div class="option-group" id="qualityOptions">
+                                <label>Quality:</label>
+                                <div class="select-wrapper">
+                                    <select id="qualitySelect">
+                                        <option value="highest">Best Quality</option>
+                                        <option value="720p">720p</option>
+                                        <option value="480p">480p</option>
+                                        <option value="360p">360p</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button id="downloadBtn" class="download-btn">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="downloadProgress" class="download-progress hidden">
+                <h3>Downloading...</h3>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                <p id="progressText">0%</p>
+                <p id="progressDetails" class="progress-details">Speed: Calculating... | ETA: Calculating...</p>
+            </div>
+            
+            <div id="errorMessage" class="error-message hidden">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="errorText"></span>
+            </div>
+            
+            <!-- SEO Content Sections -->
+            <section class="features-section">
+                <h2>Why Choose Our Video Downloader</h2>
+                <p>Our free online video downloader allows you to download videos from YouTube, Instagram, and Facebook quickly and easily. No registration required, unlimited downloads!</p>
+                
+                <div class="features-list">
+                    <div class="feature-item">
+                        <i class="fas fa-bolt"></i>
+                        <div>
+                            <h3>Fast Downloads</h3>
+                            <p>Download videos at maximum speed with our optimized servers.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <div>
+                            <h3>100% Safe & Secure</h3>
+                            <p>No registration or personal information required. Your privacy is protected.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <i class="fas fa-video"></i>
+                        <div>
+                            <h3>HD Quality</h3>
+                            <p>Download videos in high definition quality up to 4K resolution.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <i class="fas fa-music"></i>
+                        <div>
+                            <h3>MP3 Conversion</h3>
+                            <p>Extract audio from videos and download as MP3 files.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2023 Video Downloader. All rights reserved.</p>
+            <p>This service is for personal use only. Please respect copyright laws and terms of service of the platforms.</p>
+        </footer>
+    </div>
+    
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Free Video Downloader",
+      "url": "https://yourwebsite.com",
+      "description": "Fast & free online video downloader. Download videos from YouTube, Instagram, and Facebook in HD quality.",
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "YouTube video downloads",
+        "Instagram video downloads",
+        "Facebook video downloads",
+        "MP3 audio extraction",
+        "HD quality downloads",
+        "No registration required"
+      ]
+    }
+    </script>
+    
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html> 
