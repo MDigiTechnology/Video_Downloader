@@ -947,5 +947,4 @@ Size: {file_size}
         return False
 
 if __name__ == '__main__':
-    from gunicorn.app.wsgiapp import run
-        run()
+   app.run(debug=True, port=5000)
